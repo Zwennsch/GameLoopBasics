@@ -22,19 +22,26 @@ public class GameLoopTest extends JFrame implements ActionListener{
 	
 	public GameLoopTest() {
 		super("Fixed Timestep GameLoop Test");
-		Container container = getContentPane();
-		container.setLayout(new BorderLayout());
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 2));
 		panel.add(startButton);
 		panel.add(quitButton);
 		panel.add(pauseButton);
+		Container container = getContentPane();
+		container.setLayout(new BorderLayout());
+		container.add(gamePanel, BorderLayout.CENTER);
+		container.add(panel, BorderLayout.SOUTH);
+		setSize(500, 500);
 		
+		startButton.addActionListener(this);
+		quitButton.addActionListener(this);
+		pauseButton.addActionListener(this);
 		
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		GameLoopTest glt = new GameLoopTest();
+		glt.setVisible(true);
 
 	}
 
@@ -52,6 +59,13 @@ public class GameLoopTest extends JFrame implements ActionListener{
 		float ballSpeed;
 		
 		public GamePanel() {
+			ballX = lastBallX = 100;
+			ballY = lastBallY = 100;
+			ballWidth = 25;
+			ballHeight = 25;
+			ballSpeed = 25;
+			ballVelX = (float) (Math.random()* ballSpeed*2 -ballSpeed);
+			ballVelY = (float) (Math.random()* ballSpeed*2 -ballSpeed);
 			
 		}
 		
