@@ -42,12 +42,13 @@ public class GameLoopTest extends JFrame implements ActionListener{
 	public static void main(String[] args) {
 		GameLoopTest glt = new GameLoopTest();
 		glt.setVisible(true);
+		
 
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		Object s = e.getSource();
 		
 	}
 
