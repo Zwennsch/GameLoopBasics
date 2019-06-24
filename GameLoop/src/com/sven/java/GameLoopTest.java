@@ -20,13 +20,16 @@ public class GameLoopTest extends JFrame implements ActionListener{
 	private JButton quitButton = new JButton("Quit");
 	private JButton pauseButton = new JButton("Pause");
 	
+	private boolean running = false;
+	private boolean paused = false;
+	
 	public GameLoopTest() {
 		super("Fixed Timestep GameLoop Test");
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(1, 2));
+		panel.setLayout(new GridLayout(1, 3));
 		panel.add(startButton);
-		panel.add(quitButton);
 		panel.add(pauseButton);
+		panel.add(quitButton);
 		Container container = getContentPane();
 		container.setLayout(new BorderLayout());
 		container.add(gamePanel, BorderLayout.CENTER);
@@ -49,6 +52,30 @@ public class GameLoopTest extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object s = e.getSource();
+		if (s.equals(startButton)) {
+			System.out.println("Start Button clicked");
+			running = !running;
+			if(running) {
+				startButton.setText("Stop");
+				runGameLoop();
+			}else {
+				startButton.setText("Start");
+			}
+		}else if (s.equals(pauseButton)) {
+			paused = !paused;
+			if(paused) {
+				pauseButton.setText("Continue");
+			}else {
+				pauseButton.setText("Pause");
+			}
+		}else if(s.equals(quitButton)) {
+			System.exit(0);
+		}
+		
+	}
+
+	private void runGameLoop() {
+		// TODO Auto-generated method stub
 		
 	}
 
@@ -58,6 +85,7 @@ public class GameLoopTest extends JFrame implements ActionListener{
 		int ballWidth, ballHeight;
 		float ballVelX, ballVelY;
 		float ballSpeed;
+		
 		
 		public GamePanel() {
 			ballX = lastBallX = 100;
