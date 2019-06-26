@@ -76,6 +76,30 @@ public class GameLoopTest extends JFrame implements ActionListener{
 
 	private void runGameLoop() {
 		// TODO Auto-generated method stub
+		Thread loop = new Thread() {
+			public void run() {
+				gameLoop();
+			}
+		};
+		loop.start();
+	}
+	private void gameLoop() {
+		// TODO Auto-generated method stub
+		final double GAME_HERTZ = 30.0;
+		final double TIME_BETWEEN_UPDATES = 1000000000 /GAME_HERTZ;
+		final int MAX_UPDATES_PER_RENDER = 5;
+		
+		double lastUpdateTime = System.nanoTime();
+		double lastRenderTime = System.nanoTime();
+		
+		final double TARGET_FPS = 60;
+		final double TARGET_TIME_BETWEEN_RENDERS = 1000000000 / TARGET_FPS;
+		
+		int lastSecondTime = (int) (lastUpdateTime /1000000000);
+		
+		while(running) {
+			
+		}
 		
 	}
 
