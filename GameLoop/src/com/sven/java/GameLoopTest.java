@@ -98,7 +98,11 @@ public class GameLoopTest extends JFrame implements ActionListener{
 		int lastSecondTime = (int) (lastUpdateTime /1000000000);
 		
 		while(running) {
-			
+			double now = System.nanoTime();
+			int updateCount = 0;
+			while(now-lastUpdateTime > TIME_BETWEEN_UPDATES && updateCount < MAX_UPDATES_PER_RENDER) {
+				
+			}
 		}
 		
 	}
