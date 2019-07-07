@@ -1,7 +1,9 @@
 package com.sven.java;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +23,9 @@ public class GameLoopTest extends JFrame implements ActionListener{
 	
 	private boolean running = false;
 	private boolean paused = false;
+	
+	private int fps = 60;
+	private int frameCount = 0;
 	
 	public GameLoopTest() {
 		super("Fixed Timestep GameLoop Test");
@@ -101,14 +106,30 @@ public class GameLoopTest extends JFrame implements ActionListener{
 		while(running) {
 			double now = System.nanoTime();
 			int updateCount = 0;
-			//Do as many game updates as we need to, potentially playing catchup.
-			while(now-lastUpdateTime > TIME_BETWEEN_UPDATES && updateCount < MAX_UPDATES_PER_RENDER) {
-				updateGame();
-				lastUpdateTime+= TIME_BETWEEN_UPDATES;
-				updateCount++;
+			
+			if(!paused) {
+				//Do as many game updates as we need to, potentially playing catchup.
+				while(now-lastUpdateTime > TIME_BETWEEN_UPDATES && updateCount < MAX_UPDATES_PER_RENDER) {
+					updateGame();
+					lastUpdateTime+= TIME_BETWEEN_UPDATES;
+					updateCount++;
+				}
+//			if an update should for some reason take forever and we haven't reached the max_updates_per_render:
+//			dont't do this, if you need the EXACT update time!!
+				if(now-lastUpdateTime > TIME_BETWEEN_UPDATES) {
+					lastUpdateTime = now - TIME_BETWEEN_UPDATES;
+				}
+//			Render. to do so we need to calculate the interpolation
+				float interpolation = Math.min(1.0f, (float) ((now - lastUpdateTime) /TIME_BETWEEN_UPDATES));
+				drawGame(interpolation);
 			}
 		}
 		
+	}
+
+	private void drawGame(float interpolation) {
+		gamePanel.setInterpolation(interpolation);
+		gamePanel.repaint();
 	}
 
 	private void updateGame() {
@@ -122,6 +143,8 @@ public class GameLoopTest extends JFrame implements ActionListener{
 		float ballVelX, ballVelY;
 		float ballSpeed;
 		
+		int lastDrawX, lastDrawY;
+		
 		
 		public GamePanel() {
 			ballX = lastBallX = 100;
@@ -132,6 +155,11 @@ public class GameLoopTest extends JFrame implements ActionListener{
 			ballVelX = (float) (Math.random()* ballSpeed*2 -ballSpeed);
 			ballVelY = (float) (Math.random()* ballSpeed*2 -ballSpeed);
 			
+		}
+
+
+		public void setInterpolation(float interpolation) {
+			this.interpolation = interpolation;
 		}
 
 
@@ -158,6 +186,28 @@ public class GameLoopTest extends JFrame implements ActionListener{
 				ballVelY*=-1;
 				ballY = ballHeight/2;
 			}
+		}
+		
+		@Override
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.setColor(getBackground());
+			g.fillRect(lastDrawX-1, lastDrawY-1, ballWidth+2, ballHeight+2);
+			g.fillRect(5, 0, 75, 30);
+			
+			g.setColor(Color.RED);
+//			calculate the x and y coordinates for drawing the ball
+			int drawX = (int) ((ballX - lastBallX)* interpolation + lastBallX -ballWidth/2);
+			int drawY = (int) ((ballY - lastBallY)* interpolation + lastBallY -ballHeight/2);
+			g.fillOval(drawX, drawY, ballWidth, ballHeight);
+			
+			lastDrawX = drawX;
+			lastDrawY = drawY;
+			
+			g.setColor(Color.black);
+			g.drawString("FPS: "+ fps, 5, 10);
+			
+			frameCount++;
 		}
 		
 	}
