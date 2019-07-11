@@ -100,7 +100,7 @@ public class GameLoopTest extends JFrame implements ActionListener{
 //		set the target FPS e.g. how many times the render method should be called per second
 		final double TARGET_FPS = 60;
 		final double TARGET_TIME_BETWEEN_RENDERS = 1000000000 / TARGET_FPS;
-//		store the last time
+//		store the last time in seconds
 		int lastSecondTime = (int) (lastUpdateTime /1000000000);
 		
 		while(running) {
@@ -122,7 +122,21 @@ public class GameLoopTest extends JFrame implements ActionListener{
 //			Render. to do so we need to calculate the interpolation
 				float interpolation = Math.min(1.0f, (float) ((now - lastUpdateTime) /TIME_BETWEEN_UPDATES));
 				drawGame(interpolation);
+//				I am not sure why the lastRenderTime is equal to now!? Shouldn't it be System.nanoTime()?
+				lastRenderTime = now;
+				
+//				update the FPS; this is only needed , if the actual second we're in is greater than the lastSecondTime. I am still not exactly sure, why thisSecond isn't System.nanoTime()?
+				int thisSecond = (int) (lastUpdateTime/1000000000);
+				if(thisSecond > lastUpdateTime) {
+					System.out.println("NEW SECOND: "+ thisSecond + " " +frameCount);
+//					since we do this every new second, the fps is essentially the frameCount
+					fps = frameCount;
+					frameCount =0;
+					lastSecondTime = thisSecond;
+				}
+				
 			}
+			
 		}
 		
 	}
