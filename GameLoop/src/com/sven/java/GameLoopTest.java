@@ -106,6 +106,7 @@ public class GameLoopTest extends JFrame implements ActionListener{
 		while(running) {
 			double now = System.nanoTime();
 			int updateCount = 0;
+			System.out.println(fps);
 			
 			if(!paused) {
 				//Do as many game updates as we need to, potentially playing catchup.
@@ -117,6 +118,7 @@ public class GameLoopTest extends JFrame implements ActionListener{
 //			if an update should for some reason take forever and we haven't reached the max_updates_per_render:
 //			dont't do this, if you need the EXACT update time!!
 				if(now-lastUpdateTime > TIME_BETWEEN_UPDATES) {
+					System.out.println("Update take too long!");
 					lastUpdateTime = now - TIME_BETWEEN_UPDATES;
 				}
 //			Render. to do so we need to calculate the interpolation
@@ -127,12 +129,23 @@ public class GameLoopTest extends JFrame implements ActionListener{
 				
 //				update the FPS; this is only needed , if the actual second we're in is greater than the lastSecondTime. I am still not exactly sure, why thisSecond isn't System.nanoTime()?
 				int thisSecond = (int) (lastUpdateTime/1000000000);
-				if(thisSecond > lastUpdateTime) {
+				if(thisSecond > lastSecondTime) {
 					System.out.println("NEW SECOND: "+ thisSecond + " " +frameCount);
 //					since we do this every new second, the fps is essentially the frameCount
 					fps = frameCount;
 					frameCount =0;
 					lastSecondTime = thisSecond;
+				}
+//				Yield until we have at least reached the target time between renders and target time between updates
+				while(now - lastRenderTime < TARGET_TIME_BETWEEN_RENDERS && now - lastUpdateTime < TIME_BETWEEN_UPDATES) {
+					System.out.println(" in yielding thread");
+					Thread.yield();
+				 //This stops the app from consuming all your CPU. It makes this slightly less accurate, but is worth it.
+               //You can remove this line and it will still work (better), your CPU just climbs on certain OSes.
+               //FYI on some OS's this can cause pretty bad stuttering. Scroll down and have a look at different peoples' solutions to this.
+	                try {Thread.sleep(1);} catch(Exception e) {} 
+//		            
+	                now = System.nanoTime();
 				}
 				
 			}
@@ -147,6 +160,7 @@ public class GameLoopTest extends JFrame implements ActionListener{
 	}
 
 	private void updateGame() {
+		System.out.println("Updating the gameLogic");
 		gamePanel.update();
 	}
 
