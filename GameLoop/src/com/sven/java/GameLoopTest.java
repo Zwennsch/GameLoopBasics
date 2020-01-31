@@ -79,7 +79,6 @@ public class GameLoopTest extends JFrame implements ActionListener{
 	}
 
 	private void runGameLoop() {
-		// TODO Auto-generated method stub
 		Thread loop = new Thread() {
 			public void run() {
 				gameLoop();
@@ -104,6 +103,7 @@ public class GameLoopTest extends JFrame implements ActionListener{
 		int lastSecondTime = (int) (lastUpdateTime /1000000000);
 		
 		while(running) {
+			getToolkit().sync();
 			double now = System.nanoTime();
 			int updateCount = 0;
 			System.out.println(fps);
@@ -138,7 +138,6 @@ public class GameLoopTest extends JFrame implements ActionListener{
 				}
 //				Yield until we have at least reached the target time between renders and target time between updates
 				while(now - lastRenderTime < TARGET_TIME_BETWEEN_RENDERS && now - lastUpdateTime < TIME_BETWEEN_UPDATES) {
-					System.out.println(" in yielding thread");
 					Thread.yield();
 				 //This stops the app from consuming all your CPU. It makes this slightly less accurate, but is worth it.
                //You can remove this line and it will still work (better), your CPU just climbs on certain OSes.
