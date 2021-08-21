@@ -103,6 +103,8 @@ public class GameLoopTest extends JFrame implements ActionListener{
 		int lastSecondTime = (int) (lastUpdateTime /1000000000);
 		
 		while(running) {
+//			this is extremely important when working with linux!! otherwise the rendering stutters
+//			seems like it WAS important and isn't anymore...
 			getToolkit().sync();
 			double now = System.nanoTime();
 			int updateCount = 0;
